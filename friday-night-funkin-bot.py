@@ -82,7 +82,7 @@ def monitor_lanes():
                     state = "Being Pressed" if statuses[i] else "Not Being Pressed"
                     print(f"Key {info['key']} Is {state}")
                 updated = False
-            time.sleep(0.020) # Don't Disable Or Change This
+            time.sleep(0.016) # Don't Disable Or Change This
 
 if __name__ == '__main__':
     monitor_lanes()
