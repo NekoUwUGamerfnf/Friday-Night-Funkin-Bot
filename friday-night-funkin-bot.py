@@ -5,6 +5,7 @@ import keyboard
 from mss import mss
 import os
 import platform
+import sys
 from dotenv import load_dotenv
 
 def load_lanes_from_env():
@@ -14,7 +15,10 @@ def load_lanes_from_env():
         3: {'left': 1850, 'key': ','},
         4: {'left': 2125, 'key': '.'}
     }
-    env_path = os.path.join(os.path.dirname(__file__), '.env')
+    base_path = (os.path.dirname(sys.executable)
+                 if getattr(sys, 'frozen', False)
+                 else os.path.dirname(__file__))
+    env_path = os.path.join(base_path, '.env')
     if not os.path.exists(env_path):
         with open(env_path, 'w') as f:
             f.write(f"LANE_COUNT={len(default_lanes)}\n")
