@@ -54,35 +54,31 @@ def clear_console():
 def monitor_lanes():
     left0 = lanes[1]['left']
     right0 = lanes[lane_count]['left']
-    region = {'top': top, 'left': left0, 'width': right0 - left0 + 1, 'height': 1}
-    statuses = {i: False for i in lanes}
+    region = {'top': top, 'left': left0, 'width': right0 - left0 + 1, 'height': 25}
+    statuses = {i: True for i in lanes}
     updated = False
-    firsttime = True
     with mss() as sct:
         while True:
             frame = np.array(sct.grab(region))[:, :, :3]
             for i, info in lanes.items():
                 x = info['left'] - left0
-                px = frame[0, x]
                 color = target_colors[i]
-                hit = bool(np.all(np.abs(px - color) <= color_tolerance))
+                hit = np.any(np.all(np.abs(frame[:, x] - color) <= color_tolerance, axis=1))
                 if hit and not statuses[i]:
                     keyboard.press(info['key'])
                     statuses[i] = True
                     updated = True
-                    firsttime = False
-                elif firsttime or not hit and statuses[i]:
+                elif not hit and statuses[i]:
                     keyboard.release(info['key'])
                     statuses[i] = False
                     updated = True
-                    firsttime = False
             if updated:
                 clear_console()
                 for i, info in lanes.items():
                     state = "Being Pressed" if statuses[i] else "Not Being Pressed"
                     print(f"Key {info['key']} Is {state}")
                 updated = False
-            time.sleep(0.016) # Don't Disable Or Change This
+            time.sleep(0.01)
 
 if __name__ == '__main__':
     monitor_lanes()
